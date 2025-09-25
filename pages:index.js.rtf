@@ -1,379 +1,51 @@
-{\rtf1\ansi\ansicpg1252\cocoartf2865
-\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-{\*\expandedcolortbl;;}
-\margl1440\margr1440\vieww11520\viewh8400\viewkind0
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+import React, { useState } from 'react';
 
-\f0\fs24 \cf0 import React, \{ useState, useEffect \} from 'react';\
-import \{ Plus, TrendingUp, TrendingDown, Eye, DollarSign, Percent, Activity, Search, RefreshCw \} from 'lucide-react';\
-\
-const SmartWalletTracker = () => \{\
-  const [wallets, setWallets] = useState([\
-    \{\
-      id: 1,\
-      address: '0x742d35cc6af4e5f29eaabf506eab942b3f35b9f4',\
-      shortAddress: '0x742d...35b9',\
-      profit7d: 45230,\
-      profitChange: 12.5,\
-      winRate: 78,\
-      totalTrades: 23,\
-      recentBuys: ['PEPE', 'ARB', 'OP'],\
-      lastActive: '2 hours ago',\
-      status: 'active',\
-      tags: ['defi', 'momentum'],\
-      dateAdded: '2025-01-05',\
-      notes: 'Consistent DeFi positions, early mover on Layer 2 tokens'\
-    \},\
-    \{\
-      id: 2,\
-      address: '0x891a72c4e28ef88e712b8b03e18deade1c5b76c9',\
-      shortAddress: '0x891a...72c4',\
-      profit7d: 32100,\
-      profitChange: -3.2,\
-      winRate: 65,\
-      totalTrades: 31,\
-      recentBuys: ['LINK', 'UNI', 'AAVE'],\
-      lastActive: '5 hours ago',\
-      status: 'watching',\
-      tags: ['bluechip', 'swing'],\
-      dateAdded: '2025-01-04',\
-      notes: 'Large positions in established DeFi protocols'\
-    \},\
-    \{\
-      id: 3,\
-      address: '0x1f3c8a9d2e5b7c4f8a1e6d9c3b5a8f2e7c4d1a9b',\
-      shortAddress: '0x1f3c...8a9d',\
-      profit7d: 28750,\
-      profitChange: 8.9,\
-      winRate: 82,\
-      totalTrades: 15,\
-      recentBuys: ['SOL', 'BONK', 'JUP'],\
-      lastActive: '1 hour ago',\
-      status: 'active',\
-      tags: ['solana', 'memecoin'],\
-      dateAdded: '2025-01-05',\
-      notes: 'Solana ecosystem specialist with high win rate'\
-    \}\
-  ]);\
-\
-  const [newWallet, setNewWallet] = useState(\{\
-    address: '',\
-    notes: '',\
-    tags: []\
-  \});\
-\
-  const [showAddForm, setShowAddForm] = useState(false);\
-  const [filterStatus, setFilterStatus] = useState('all');\
-  const [searchTerm, setSearchTerm] = useState('');\
-\
-  const addWallet = () => \{\
-    if (newWallet.address.trim()) \{\
-      const wallet = \{\
-        id: wallets.length + 1,\
-        address: newWallet.address,\
-        shortAddress: newWallet.address.slice(0, 6) + '...' + newWallet.address.slice(-4),\
-        profit7d: 0,\
-        profitChange: 0,\
-        winRate: 0,\
-        totalTrades: 0,\
-        recentBuys: [],\
-        lastActive: 'Just added',\
-        status: 'watching',\
-        tags: newWallet.tags,\
-        dateAdded: new Date().toISOString().split('T')[0],\
-        notes: newWallet.notes\
-      \};\
-      setWallets([...wallets, wallet]);\
-      setNewWallet(\{ address: '', notes: '', tags: [] \});\
-      setShowAddForm(false);\
-    \}\
-  \};\
-\
-  const filteredWallets = wallets.filter(wallet => \{\
-    const matchesStatus = filterStatus === 'all' || wallet.status === filterStatus;\
-    const matchesSearch = wallet.address.toLowerCase().includes(searchTerm.toLowerCase()) ||\
-                         wallet.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));\
-    return matchesStatus && matchesSearch;\
-  \});\
-\
-  const totalProfit = wallets.reduce((sum, wallet) => sum + wallet.profit7d, 0);\
-  const avgWinRate = wallets.reduce((sum, wallet) => sum + wallet.winRate, 0) / wallets.length;\
-\
-  return (\
-    <div className="p-6 max-w-7xl mx-auto bg-gray-50 min-h-screen">\
-      \{/* Header */\}\
-      <div className="mb-8">\
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Smart Wallet Finder Dashboard</h1>\
-        <p className="text-gray-600 mb-4">Track and analyze profitable wallet behavior from Dune Analytics</p>\
-        \
-        \{/* Quick Stats */\}\
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">\
-          <div className="bg-white rounded-lg p-4 shadow-sm border">\
-            <div className="flex items-center justify-between">\
-              <div>\
-                <p className="text-sm text-gray-600">Tracked Wallets</p>\
-                <p className="text-2xl font-bold text-gray-900">\{wallets.length\}</p>\
-              </div>\
-              <Eye className="h-8 w-8 text-blue-500" />\
-            </div>\
-          </div>\
-          \
-          <div className="bg-white rounded-lg p-4 shadow-sm border">\
-            <div className="flex items-center justify-between">\
-              <div>\
-                <p className="text-sm text-gray-600">Total 7d Profit</p>\
-                <p className="text-2xl font-bold text-green-600">$\{totalProfit.toLocaleString()\}</p>\
-              </div>\
-              <DollarSign className="h-8 w-8 text-green-500" />\
-            </div>\
-          </div>\
-          \
-          <div className="bg-white rounded-lg p-4 shadow-sm border">\
-            <div className="flex items-center justify-between">\
-              <div>\
-                <p className="text-sm text-gray-600">Avg Win Rate</p>\
-                <p className="text-2xl font-bold text-blue-600">\{avgWinRate.toFixed(1)\}%</p>\
-              </div>\
-              <Percent className="h-8 w-8 text-blue-500" />\
-            </div>\
-          </div>\
-          \
-          <div className="bg-white rounded-lg p-4 shadow-sm border">\
-            <div className="flex items-center justify-between">\
-              <div>\
-                <p className="text-sm text-gray-600">Active Wallets</p>\
-                <p className="text-2xl font-bold text-orange-600">\
-                  \{wallets.filter(w => w.status === 'active').length\}\
-                </p>\
-              </div>\
-              <Activity className="h-8 w-8 text-orange-500" />\
-            </div>\
-          </div>\
-        </div>\
-      </div>\
-\
-      \{/* How to Use Guide */\}\
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">\
-        <h2 className="text-xl font-semibold text-blue-900 mb-4">\uc0\u55357 \u56522  How to Use Smart Wallet Finder Dashboard</h2>\
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">\
-          <div>\
-            <h3 className="font-semibold text-blue-800 mb-2">Step 1: Access the Dashboard</h3>\
-            <p className="text-blue-700 text-sm mb-4">\
-              Go to <code className="bg-blue-100 px-2 py-1 rounded">dune.com/chimpy/smart-wallet-finder</code> and use the filters:\
-            </p>\
-            <ul className="text-blue-700 text-sm space-y-1 ml-4">\
-              <li>\'95 <strong>Time Range</strong>: Set to 7d for weekly profits</li>\
-              <li>\'95 <strong>Min Profit</strong>: Filter for $1000+ to avoid noise</li>\
-              <li>\'95 <strong>Min Trades</strong>: Set to 5+ for active wallets</li>\
-              <li>\'95 <strong>Chain</strong>: Ethereum for main analysis</li>\
-            </ul>\
-          </div>\
-          <div>\
-            <h3 className="font-semibold text-blue-800 mb-2">Step 2: Daily Routine (5 minutes)</h3>\
-            <ol className="text-blue-700 text-sm space-y-1 ml-4">\
-              <li>1. Check top 10 most profitable wallets</li>\
-              <li>2. Note any new wallets in rankings</li>\
-              <li>3. Track recent token purchases</li>\
-              <li>4. Add promising wallets below</li>\
-            </ol>\
-          </div>\
-        </div>\
-      </div>\
-\
-      \{/* Controls */\}\
-      <div className="bg-white rounded-lg p-4 mb-6 shadow-sm border">\
-        <div className="flex flex-wrap gap-4 items-center justify-between">\
-          <div className="flex gap-4 items-center">\
-            <div className="relative">\
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />\
-              <input\
-                type="text"\
-                placeholder="Search wallets or tags..."\
-                value=\{searchTerm\}\
-                onChange=\{(e) => setSearchTerm(e.target.value)\}\
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"\
-              />\
-            </div>\
-            \
-            <select\
-              value=\{filterStatus\}\
-              onChange=\{(e) => setFilterStatus(e.target.value)\}\
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"\
-            >\
-              <option value="all">All Status</option>\
-              <option value="active">Active</option>\
-              <option value="watching">Watching</option>\
-              <option value="inactive">Inactive</option>\
-            </select>\
-          </div>\
-          \
-          <div className="flex gap-2">\
-            <button className="flex items-center gap-2 px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50">\
-              <RefreshCw className="h-4 w-4" />\
-              Refresh Data\
-            </button>\
-            <button\
-              onClick=\{() => setShowAddForm(!showAddForm)\}\
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"\
-            >\
-              <Plus className="h-4 w-4" />\
-              Add Wallet\
-            </button>\
-          </div>\
-        </div>\
-      </div>\
-\
-      \{/* Add Wallet Form */\}\
-      \{showAddForm && (\
-        <div className="bg-white rounded-lg p-6 mb-6 shadow-sm border">\
-          <h3 className="text-lg font-semibold mb-4">Add New Wallet to Track</h3>\
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">\
-            <div>\
-              <label className="block text-sm font-medium text-gray-700 mb-2">Wallet Address</label>\
-              <input\
-                type="text"\
-                placeholder="0x742d35cc6af4e5f29eaabf506eab942b3f35b9f4"\
-                value=\{newWallet.address\}\
-                onChange=\{(e) => setNewWallet(\{...newWallet, address: e.target.value\})\}\
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"\
-              />\
-            </div>\
-            <div>\
-              <label className="block text-sm font-medium text-gray-700 mb-2">Tags (comma separated)</label>\
-              <input\
-                type="text"\
-                placeholder="defi, arbitrage, momentum"\
-                value=\{newWallet.tags.join(', ')\}\
-                onChange=\{(e) => setNewWallet(\{...newWallet, tags: e.target.value.split(',').map(t => t.trim())\})\}\
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"\
-              />\
-            </div>\
-            <div className="md:col-span-2">\
-              <label className="block text-sm font-medium text-gray-700 mb-2">Notes</label>\
-              <textarea\
-                placeholder="Why are you tracking this wallet? Trading style, sector focus, etc."\
-                value=\{newWallet.notes\}\
-                onChange=\{(e) => setNewWallet(\{...newWallet, notes: e.target.value\})\}\
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"\
-                rows="3"\
-              />\
-            </div>\
-          </div>\
-          <div className="flex gap-2 mt-4">\
-            <button\
-              onClick=\{addWallet\}\
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"\
-            >\
-              Add Wallet\
-            </button>\
-            <button\
-              onClick=\{() => setShowAddForm(false)\}\
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"\
-            >\
-              Cancel\
-            </button>\
-          </div>\
-        </div>\
-      )\}\
-\
-      \{/* Wallet List */\}\
-      <div className="bg-white rounded-lg shadow-sm border">\
-        <div className="px-6 py-4 border-b border-gray-200">\
-          <h2 className="text-lg font-semibold text-gray-900">Tracked Wallets (\{filteredWallets.length\})</h2>\
-        </div>\
-        \
-        <div className="overflow-x-auto">\
-          <table className="w-full">\
-            <thead className="bg-gray-50">\
-              <tr>\
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Wallet</th>\
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">7d Profit</th>\
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Win Rate</th>\
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Recent Buys</th>\
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>\
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>\
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Active</th>\
-              </tr>\
-            </thead>\
-            <tbody className="bg-white divide-y divide-gray-200">\
-              \{filteredWallets.map((wallet) => (\
-                <tr key=\{wallet.id\} className="hover:bg-gray-50">\
-                  <td className="px-6 py-4 whitespace-nowrap">\
-                    <div>\
-                      <p className="text-sm font-mono text-gray-900">\{wallet.shortAddress\}</p>\
-                      <div className="flex gap-1 mt-1">\
-                        \{wallet.tags.map(tag => (\
-                          <span key=\{tag\} className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">\
-                            \{tag\}\
-                          </span>\
-                        ))\}\
-                      </div>\
-                    </div>\
-                  </td>\
-                  <td className="px-6 py-4 whitespace-nowrap">\
-                    <div className="flex items-center">\
-                      <p className=\{`text-sm font-semibold $\{wallet.profit7d >= 0 ? 'text-green-600' : 'text-red-600'\}`\}>\
-                        $\{wallet.profit7d.toLocaleString()\}\
-                      </p>\
-                      <div className="ml-2 flex items-center">\
-                        \{wallet.profitChange >= 0 ? (\
-                          <TrendingUp className="h-4 w-4 text-green-500" />\
-                        ) : (\
-                          <TrendingDown className="h-4 w-4 text-red-500" />\
-                        )\}\
-                        <span className=\{`text-xs ml-1 $\{wallet.profitChange >= 0 ? 'text-green-600' : 'text-red-600'\}`\}>\
-                          \{wallet.profitChange >= 0 ? '+' : ''\}\{wallet.profitChange\}%\
-                        </span>\
-                      </div>\
-                    </div>\
-                  </td>\
-                  <td className="px-6 py-4 whitespace-nowrap">\
-                    <div className="flex items-center">\
-                      <div className="flex-1 bg-gray-200 rounded-full h-2 mr-2">\
-                        <div\
-                          className=\{`h-2 rounded-full $\{wallet.winRate >= 70 ? 'bg-green-500' : wallet.winRate >= 60 ? 'bg-yellow-500' : 'bg-red-500'\}`\}\
-                          style=\{\{ width: `$\{wallet.winRate\}%` \}\}\
-                        ></div>\
-                      </div>\
-                      <span className="text-sm text-gray-900 min-w-0">\{wallet.winRate\}%</span>\
-                    </div>\
-                    <p className="text-xs text-gray-500">\{wallet.totalTrades\} trades</p>\
-                  </td>\
-                  <td className="px-6 py-4">\
-                    <div className="flex flex-wrap gap-1">\
-                      \{wallet.recentBuys.map(token => (\
-                        <span key=\{token\} className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded font-mono">\
-                          \{token\}\
-                        </span>\
-                      ))\}\
-                    </div>\
-                  </td>\
-                  <td className="px-6 py-4 whitespace-nowrap">\
-                    <span className=\{`px-2 py-1 text-xs font-semibold rounded-full $\{\
-                      wallet.status === 'active' ? 'bg-green-100 text-green-800' :\
-                      wallet.status === 'watching' ? 'bg-yellow-100 text-yellow-800' :\
-                      'bg-gray-100 text-gray-800'\
-                    \}`\}>\
-                      \{wallet.status\}\
-                    </span>\
-                  </td>\
-                  <td className="px-6 py-4">\
-                    <p className="text-sm text-gray-600 max-w-xs truncate" title=\{wallet.notes\}>\
-                      \{wallet.notes\}\
-                    </p>\
-                  </td>\
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">\
-                    \{wallet.lastActive\}\
-                  </td>\
-                </tr>\
-              ))\}\
-            </tbody>\
-          </table>\
-        </div>\
-      </div>\
-    </div>\
-  );\
-\};\
-\
-export default SmartWalletTracker;}
+export default function SmartWalletTracker() {
+  const [wallets] = useState([
+    {
+      id: 1,
+      address: '0x742d...35b9',
+      profit7d: 45230,
+      winRate: 78,
+      status: 'active'
+    }
+  ]);
+
+  return (
+    <div style={{ padding: '20px', backgroundColor: '#f5f5f5', minHeight: '100vh' }}>
+      <h1 style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '20px' }}>
+        Smart Wallet Tracker
+      </h1>
+      
+      <div style={{ 
+        backgroundColor: 'white', 
+        padding: '20px', 
+        borderRadius: '8px',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+      }}>
+        <h2 style={{ fontSize: '20px', marginBottom: '15px' }}>
+          Tracked Wallets ({wallets.length})
+        </h2>
+        
+        {wallets.map(wallet => (
+          <div key={wallet.id} style={{
+            padding: '15px',
+            backgroundColor: '#f9f9f9',
+            borderRadius: '6px',
+            marginBottom: '10px'
+          }}>
+            <p><strong>Address:</strong> {wallet.address}</p>
+            <p><strong>7d Profit:</strong> ${wallet.profit7d.toLocaleString()}</p>
+            <p><strong>Win Rate:</strong> {wallet.winRate}%</p>
+            <p><strong>Status:</strong> {wallet.status}</p>
+          </div>
+        ))}
+      </div>
+      
+      <div style={{ marginTop: '20px', color: '#666' }}>
+        <p>✅ Deployment successful!</p>
+        <p>📊 Ready to track smart wallets</p>
+      </div>
+    </div>
+  );
+}
